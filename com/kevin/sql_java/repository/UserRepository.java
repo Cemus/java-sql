@@ -5,6 +5,7 @@ import com.kevin.sql_java.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class UserRepository {
     /*
@@ -41,5 +42,48 @@ public class UserRepository {
         }
         return newUser;
     }
-
+    public static boolean isExist(String email){
+        User getUser = null;
+        try{
+            String sql ="SELECT id, firstname, lastname, email FROM users WHERE email = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                getUser = new User();
+                getUser.setId(resultSet.getInt("id"));
+                getUser.setFirstname(resultSet.getString("firstname"));
+                getUser.setLastname(resultSet.getString("lastname"));
+                getUser.setEmail(resultSet.getString("email"));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        boolean emailExists = false;
+        if (getUser != null){
+            emailExists = true;
+            System.out.println("Le mail existe déjà");
+        }
+        return emailExists;
+    }
+    public static User findByEmail(String email){
+        User getUser = null;
+        try{
+            String sql ="SELECT id, firstname, lastname, email FROM users WHERE email = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                getUser = new User();
+                getUser.setId(resultSet.getInt("id"));
+                getUser.setFirstname(resultSet.getString("firstname"));
+                getUser.setLastname(resultSet.getString("lastname"));
+                getUser.setEmail(resultSet.getString("email"));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println(getUser);
+        return getUser;
+    }
 }
