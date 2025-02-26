@@ -6,6 +6,10 @@ import com.kevin.sql_java.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class UserRepository {
     /*
@@ -66,7 +70,7 @@ public class UserRepository {
         }
         return emailExists;
     }
-    public static User findByEmail(String email){
+    public static Optional<User> findByEmail(String email){
         User getUser = null;
         try{
             String sql ="SELECT id, firstname, lastname, email FROM users WHERE email = ?";
@@ -80,9 +84,28 @@ public class UserRepository {
                 getUser.setLastname(resultSet.getString("lastname"));
                 getUser.setEmail(resultSet.getString("email"));
             }
-        }catch(Exception e){
+        }catch(SQLException e){
             e.printStackTrace();
         }
-        return getUser;
+        return Optional.ofNullable(getUser);
+    }
+    public static List<User> findAll(){
+        List<User> listUser = new ArrayList<User>();
+        try{
+            String sql ="SELECT id, firstname, lastname, email FROM users";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setFirstname(resultSet.getString("firstname"));
+                user.setLastname(resultSet.getString("lastname"));
+                user.setEmail(resultSet.getString("email"));
+                listUser.add(user);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return listUser;
     }
 }
