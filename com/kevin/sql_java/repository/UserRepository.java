@@ -109,6 +109,9 @@ public class UserRepository {
         return listUser;
     }
     public static User update(User modifiedUser, String email){
+        if (!isExist(email)){
+            return null;
+        }
         try {
             String sql = "UPDATE users SET " +
                     "firstname = ?," +
