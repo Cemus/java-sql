@@ -108,4 +108,24 @@ public class UserRepository {
         }
         return listUser;
     }
+    public static User update(User modifiedUser, String email){
+        try {
+            String sql = "UPDATE users SET " +
+                    "firstname = ?," +
+                    "lastname = ?," +
+                    "email = ?," +
+                    "password = ? " +
+                    "WHERE email = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, modifiedUser.getId());
+            preparedStatement.setString(2, modifiedUser.getFirstname());
+            preparedStatement.setString(3, modifiedUser.getLastname());
+            preparedStatement.setString(4, modifiedUser.getEmail());
+            preparedStatement.setString(5, email);
+            preparedStatement.executeUpdate();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return modifiedUser;
+    }
 }
