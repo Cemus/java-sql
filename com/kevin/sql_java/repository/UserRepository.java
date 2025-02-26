@@ -83,7 +83,6 @@ public class UserRepository {
         }catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println(getUser);
         return getUser;
     }
 }
