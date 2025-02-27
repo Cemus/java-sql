@@ -6,7 +6,7 @@ public class User {
     private String lastname;
     private String email;
     private String password;
-
+    private Roles roles;
     public User(){
 
     }
@@ -56,13 +56,22 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", firstname='" + firstname + '\'' +
+                "email='" + email + '\'' +
                 ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", id=" + id +
+                ", roles=" + roles +
                 '}';
     }
 }

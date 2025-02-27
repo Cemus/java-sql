@@ -6,7 +6,6 @@ import com.kevin.sql_java.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +83,7 @@ public class UserRepository {
                 getUser.setLastname(resultSet.getString("lastname"));
                 getUser.setEmail(resultSet.getString("email"));
             }
-        }catch(SQLException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         return Optional.ofNullable(getUser);
@@ -103,7 +102,7 @@ public class UserRepository {
                 user.setEmail(resultSet.getString("email"));
                 listUser.add(user);
             }
-        }catch(SQLException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         return listUser;
