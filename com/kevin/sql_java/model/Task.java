@@ -13,7 +13,7 @@ public class Task {
     private Date endDate;
     private boolean status;
     private User user;
-    private List<Category> categories;
+    private final List<Category> categories;
 
     // Constructeurs
     public Task(){
