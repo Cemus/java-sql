@@ -17,7 +17,7 @@ public class Task {
 
     // Constructeurs
     public Task(){
-
+        this.categories = new ArrayList<>();
     }
     public Task(String title, String content, User user){
         this.title = title;
