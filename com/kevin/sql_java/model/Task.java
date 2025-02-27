@@ -1,7 +1,7 @@
 package com.kevin.sql_java.model;
 
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Task {
@@ -9,9 +9,9 @@ public class Task {
     private int id;
     private String title;
     private String content;
-    private Date createAt;
-    private Date endDate;
-    private boolean status;
+    private java.sql.Date createAt;
+    private java.sql.Date endDate;
+    private boolean status = false;
     private User user;
     private final List<Category> categories;
 
@@ -45,16 +45,16 @@ public class Task {
     public void setContent(String content) {
         this.content = content;
     }
-    public Date getCreateAt() {
+    public java.sql.Date getCreateAt() {
         return createAt;
     }
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
     }
-    public Date getEndDate() {
+    public java.sql.Date getEndDate() {
         return endDate;
     }
-    public void setEndDate(Date endDate) {
+    public void setEndDate(java.sql.Date endDate) {
         this.endDate = endDate;
     }
     public boolean isStatus() {

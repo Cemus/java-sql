@@ -1,0 +1,135 @@
+package com.kevin.sql_java.repository;
+
+import com.kevin.sql_java.db.Bdd;
+import com.kevin.sql_java.model.Category;
+import com.kevin.sql_java.model.Roles;
+import com.kevin.sql_java.model.Task;
+import com.kevin.sql_java.model.User;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class TaskRepository {
+    public static final Connection connection = Bdd.getConnection();
+    public static Task save(Task addTask) {
+        Task newTask = null;
+        try {
+            String sql = "INSERT INTO task( title, content, users_id) " +
+                    "VALUES (?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, addTask.getTitle());
+            preparedStatement.setString(2, addTask.getContent());
+            preparedStatement.setInt(3, addTask.getUser().getId());
+            int nbrRows = preparedStatement.executeUpdate();
+            if (nbrRows > 0){
+                newTask = new Task(addTask.getTitle(),addTask.getContent(), addTask.getUser());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newTask;
+    }
+    public static boolean isExist(String taskTitle) {
+        Task getTask = null;
+        try{
+            String sql = "SELECT id from task WHERE title = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, taskTitle);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                getTask = new Task();
+                getTask.setId(resultSet.getInt("id"));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        boolean taskExists = false;
+        if (getTask != null){
+            taskExists = true;
+            System.out.println("La tâche existe déjà");
+        }
+        return taskExists;
+    }
+    public static Optional<Task> findBy(String taskTitle) {
+        Task getTask = null;
+        try{
+            String sql ="SELECT t.id AS tId, t.title, t.content, t.create_at, t.end_date, t.`status`, \n" +
+                    "u.id AS uId, u.firstname, u.lastname, r.id AS rId, r.roles_name AS rName,\n" +
+                    "group_concat(c.id) AS catId, " +
+                    "group_concat(c.category_name) AS catName  " +
+                    "FROM task_category AS tc " +
+                    "INNER JOIN task AS t ON tc.task_id = t.id " +
+                    "INNER JOIN category AS c ON tc.category_id = c.id " +
+                    "INNER JOIN users AS u ON t.users_id = u.id " +
+                    "INNER JOIN roles AS r ON u.roles_id = r.id " +
+                    "WHERE t.title = ? "+
+                    "GROUP BY t.id ";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,taskTitle);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                getTask = new Task();
+                getTask.setId(resultSet.getInt("id"));
+                getTask.setTitle(resultSet.getString("title"));
+                getTask.setContent(resultSet.getString("content"));
+                getTask.setCreateAt(resultSet.getDate("create_at"));
+                getTask.setEndDate(resultSet.getDate("end_date"));
+                getTask.setStatus(resultSet.getBoolean("status"));
+
+                Roles role = new Roles();
+                role.setRolesName(resultSet.getString("rName"));
+                role.setId(resultSet.getInt("rId"));
+
+                User user = new User();
+                user.setId(resultSet.getInt("uId"));
+                user.setFirstname(resultSet.getString("firstname"));
+                user.setLastname(resultSet.getString("lastname"));
+                user.setRoles(role);
+
+                getTask.setUser(user);
+                Category category = new Category(resultSet.getString("catName"));
+                category.setId(resultSet.getInt("catId"));
+                getTask.addCategory(category);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return Optional.ofNullable(getTask);
+    }
+    public static List<Task> findAll() {
+        List<Task> listTask = new ArrayList<Task>();
+        try{
+            String sql ="SELECT t.id AS tId, t.title, t.content, t.create_at, t.end_date, t.`status`, \n" +
+                    "u.id AS uId, u.firstname, u.lastname, r.id AS rId, r.roles_name AS rName,\n" +
+                    "group_concat(c.id) AS catId,\n" +
+                    "group_concat(c.category_name) AS catName \n" +
+                    "FROM task_category AS tc\n" +
+                    "INNER JOIN task AS t ON tc.task_id = t.id\n" +
+                    "INNER JOIN category AS c ON tc.category_id = c.id\n" +
+                    "INNER JOIN users AS u ON t.users_id = u.id\n" +
+                    "INNER JOIN roles AS r ON u.roles_id = r.id\n" +
+                    "GROUP BY t.id";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                Task task = new Task();
+                task.setId(resultSet.getInt("id"));
+                task.setTitle(resultSet.getString("title"));
+                task.setContent(resultSet.getString("content"));
+                task.setCreateAt(resultSet.getDate("create_at"));
+                task.setEndDate(resultSet.getDate("end_date"));
+                task.setStatus(resultSet.getBoolean("status"));
+                listTask.add(task);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return listTask;
+    }
+}
