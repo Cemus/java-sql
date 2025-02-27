@@ -104,15 +104,15 @@ public class TaskRepository {
     public static List<Task> findAll() {
         List<Task> listTask = new ArrayList<Task>();
         try{
-            String sql ="SELECT t.id AS tId, t.title, t.content, t.create_at, t.end_date, t.`status`, \n" +
-                    "u.id AS uId, u.firstname, u.lastname, r.id AS rId, r.roles_name AS rName,\n" +
-                    "group_concat(c.id) AS catId,\n" +
-                    "group_concat(c.category_name) AS catName \n" +
-                    "FROM task_category AS tc\n" +
-                    "INNER JOIN task AS t ON tc.task_id = t.id\n" +
-                    "INNER JOIN category AS c ON tc.category_id = c.id\n" +
-                    "INNER JOIN users AS u ON t.users_id = u.id\n" +
-                    "INNER JOIN roles AS r ON u.roles_id = r.id\n" +
+            String sql ="SELECT t.id AS tId, t.title, t.content, t.create_at, t.end_date, t.`status`," +
+                    "u.id AS uId, u.firstname, u.lastname, r.id AS rId, r.roles_name AS rName," +
+                    "group_concat(c.id) AS catId," +
+                    "group_concat(c.category_name) AS catName " +
+                    "FROM task_category AS tc " +
+                    "INNER JOIN task AS t ON tc.task_id = t.id " +
+                    "INNER JOIN category AS c ON tc.category_id = c.id " +
+                    "INNER JOIN users AS u ON t.users_id = u.id " +
+                    "INNER JOIN roles AS r ON u.roles_id = r.id " +
                     "GROUP BY t.id";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
