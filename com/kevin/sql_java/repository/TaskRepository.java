@@ -118,7 +118,7 @@ public class TaskRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 Task task = new Task();
-                task.setId(resultSet.getInt("id"));
+                task.setId(resultSet.getInt("tId"));
                 task.setTitle(resultSet.getString("title"));
                 task.setContent(resultSet.getString("content"));
                 task.setCreateAt(resultSet.getDate("create_at"));
@@ -134,6 +134,7 @@ public class TaskRepository {
                 user.setFirstname(resultSet.getString("firstname"));
                 user.setLastname(resultSet.getString("lastname"));
                 user.setRoles(role);
+
 
                 task.setUser(user);
                 Category category = new Category(resultSet.getString("catName"));
