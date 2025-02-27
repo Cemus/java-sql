@@ -70,7 +70,7 @@ public class TaskRepository {
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1,taskTitle);
-            preparedStatement.setDate(1,taskDate);
+            preparedStatement.setDate(2,taskDate);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 getTask = new Task();
