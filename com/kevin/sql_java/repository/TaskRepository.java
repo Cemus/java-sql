@@ -125,6 +125,21 @@ public class TaskRepository {
                 task.setCreateAt(resultSet.getDate("create_at"));
                 task.setEndDate(resultSet.getDate("end_date"));
                 task.setStatus(resultSet.getBoolean("status"));
+
+                Roles role = new Roles();
+                role.setRolesName(resultSet.getString("rName"));
+                role.setId(resultSet.getInt("rId"));
+
+                User user = new User();
+                user.setId(resultSet.getInt("uId"));
+                user.setFirstname(resultSet.getString("firstname"));
+                user.setLastname(resultSet.getString("lastname"));
+                user.setRoles(role);
+
+                task.setUser(user);
+                Category category = new Category(resultSet.getString("catName"));
+                category.setId(resultSet.getInt("catId"));
+                task.addCategory(category);
                 listTask.add(task);
             }
         }catch(SQLException e){
