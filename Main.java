@@ -14,7 +14,5 @@ public class Main {
         System.out.println(TaskRepository.findAll());
 
 
-        System.out.println(TaskRepository.findAll());
-
     }
 }

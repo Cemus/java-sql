@@ -135,7 +135,6 @@ public class TaskRepository {
                 user.setLastname(resultSet.getString("lastname"));
                 user.setRoles(role);
 
-
                 task.setUser(user);
                 Category category = new Category(resultSet.getString("catName"));
                 category.setId(resultSet.getInt("catId"));
