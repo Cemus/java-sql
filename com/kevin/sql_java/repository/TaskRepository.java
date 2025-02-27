@@ -6,10 +6,7 @@ import com.kevin.sql_java.model.Roles;
 import com.kevin.sql_java.model.Task;
 import com.kevin.sql_java.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,12 +31,13 @@ public class TaskRepository {
         }
         return newTask;
     }
-    public static boolean isExist(String taskTitle) {
+    public static boolean isExist(String taskTitle, Date taskDate) {
         Task getTask = null;
         try{
-            String sql = "SELECT id from task WHERE title = ?";
+            String sql = "SELECT id from task WHERE title = ? AND ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, taskTitle);
+            preparedStatement.setDate(2, taskDate);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 getTask = new Task();
@@ -55,7 +53,7 @@ public class TaskRepository {
         }
         return taskExists;
     }
-    public static Optional<Task> findBy(String taskTitle) {
+    public static Optional<Task> findBy(String taskTitle, Date taskDate) {
         Task getTask = null;
         try{
             String sql ="SELECT t.id AS tId, t.title, t.content, t.create_at, t.end_date, t.`status`, \n" +
@@ -67,11 +65,12 @@ public class TaskRepository {
                     "INNER JOIN category AS c ON tc.category_id = c.id " +
                     "INNER JOIN users AS u ON t.users_id = u.id " +
                     "INNER JOIN roles AS r ON u.roles_id = r.id " +
-                    "WHERE t.title = ? "+
+                    "WHERE t.title = ? AND t.create_at = ? "+
                     "GROUP BY t.id ";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1,taskTitle);
+            preparedStatement.setDate(1,taskDate);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 getTask = new Task();
