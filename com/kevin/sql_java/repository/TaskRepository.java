@@ -16,12 +16,15 @@ public class TaskRepository {
     public static Task save(Task addTask) {
         Task newTask = null;
         try {
-            String sql = "INSERT INTO task( title, content, users_id) " +
-                    "VALUES (?,?,?)";
+            String sql = "INSERT INTO task( title, content, end_date, users_id) " +
+                    "VALUES (?,?,?, (SELECT id from users WHERE firstname = ? AND lastname = ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, addTask.getTitle());
             preparedStatement.setString(2, addTask.getContent());
-            preparedStatement.setInt(3, addTask.getUser().getId());
+            preparedStatement.setDate(3, addTask.getEndDate());
+            preparedStatement.setString(4, addTask.getUser().getFirstname());
+            preparedStatement.setString(5, addTask.getUser().getLastname());
+
             int nbrRows = preparedStatement.executeUpdate();
             if (nbrRows > 0){
                 newTask = new Task(addTask.getTitle(),addTask.getContent(), addTask.getUser());
@@ -65,8 +68,10 @@ public class TaskRepository {
                     "INNER JOIN category AS c ON tc.category_id = c.id " +
                     "INNER JOIN users AS u ON t.users_id = u.id " +
                     "INNER JOIN roles AS r ON u.roles_id = r.id " +
-                    "WHERE t.title = ? AND t.create_at = ? "+
-                    "GROUP BY t.id ";
+                    "WHERE t.title = ? AND t.create_at = ? " +
+                    "GROUP BY t.id " +
+                    "ORDER BY DESC LIMIT 1";
+
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1,taskTitle);
@@ -134,11 +139,19 @@ public class TaskRepository {
                 user.setFirstname(resultSet.getString("firstname"));
                 user.setLastname(resultSet.getString("lastname"));
                 user.setRoles(role);
-
                 task.setUser(user);
-                Category category = new Category(resultSet.getString("catName"));
-                category.setId(resultSet.getInt("catId"));
-                task.addCategory(category);
+
+                if (resultSet.getString("catId") != null && resultSet.getString("catName") != null){
+                    String[] arrayCatId = resultSet.getString("catId").split(",");
+                    String[] arrayCatName = resultSet.getString("catName").split(",");
+                    for (int i = 0; i < arrayCatId.length; i++){
+                        Category newCat = new Category();
+                        newCat.setId(Integer.parseInt(arrayCatId[i]));
+                        newCat.setCategoryName(arrayCatName[i]);
+                        task.addCategory(newCat);
+                    }
+                }
+
                 listTask.add(task);
             }
         }catch(SQLException e){
